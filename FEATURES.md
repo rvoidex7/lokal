@@ -105,10 +105,14 @@ This is a comprehensive community management platform for Lokal Cafe, built with
 ## Setup Instructions
 
 ### 1. Database Setup
-Run the SQL scripts in the following order:
-1. `database-schema.sql` - Base tables
-2. `social-groups-schema.sql` - Social groups tables
-3. `enhanced-schema.sql` - New features and enhancements
+Run the SQL scripts from the `database/schemas` directory in the following order:
+1. `01_base_tables.sql`
+2. `02_social_groups.sql`
+3. `03_products.sql`
+4. `04_personal_letters.sql`
+5. `05_enhancements.sql`
+
+Alternatively, you can run the `setup-complete.sql` script from the `database/full` directory to set up the entire database at once.
 
 ### 2. Environment Variables
 Create a `.env.local` file with:
