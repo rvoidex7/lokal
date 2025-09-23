@@ -15,8 +15,9 @@ import { SocialGroupsManager } from "@/components/admin/social-groups-manager"
 import { ProductsManager } from "@/components/admin/products-manager"
 import { useToast } from "@/hooks/use-toast"
 import { errorHandler } from "@/lib/error-handler"
-import { Calendar, Users, Edit, Trash2, Megaphone, UsersRound, Package } from "lucide-react"
+import { Calendar, Users, Edit, Trash2, Megaphone, UsersRound, Package, Send, QrCode } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 interface Announcement {
   id: string
@@ -116,7 +117,7 @@ export function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="announcements" className="w-full">
-        <TabsList className="grid w-full max-w-lg grid-cols-3">
+        <TabsList className="grid w-full max-w-xl grid-cols-4">
           <TabsTrigger value="announcements" className="flex items-center gap-2">
             <Megaphone className="w-4 h-4" />
             Duyurular
@@ -128,6 +129,10 @@ export function AdminDashboard() {
           <TabsTrigger value="products" className="flex items-center gap-2">
             <Package className="w-4 h-4" />
             Ürünler
+          </TabsTrigger>
+          <TabsTrigger value="vouchers" className="flex items-center gap-2">
+            <QrCode className="w-4 h-4" />
+            Kuponlar
           </TabsTrigger>
         </TabsList>
 
@@ -212,6 +217,24 @@ export function AdminDashboard() {
 
         <TabsContent value="products">
           <ProductsManager />
+        </TabsContent>
+
+        <TabsContent value="vouchers" className="space-y-4">
+            <h2 className="text-xl font-semibold">Kupon İşlemleri</h2>
+            <div className="flex gap-4">
+                <Link href="/admin/send-voucher" passHref>
+                    <Button>
+                        <Send className="w-4 h-4 mr-2" />
+                        Hediye Kuponu Gönder
+                    </Button>
+                </Link>
+                <Link href="/admin/redeem-voucher" passHref>
+                    <Button variant="outline">
+                        <QrCode className="w-4 h-4 mr-2" />
+                        Kupon Okut
+                    </Button>
+                </Link>
+            </div>
         </TabsContent>
       </Tabs>
     </div>
