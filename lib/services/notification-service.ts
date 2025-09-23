@@ -500,24 +500,58 @@ class NotificationService {
 
   private async sendEmailNotification(userId: string, notification: Notification): Promise<boolean> {
     try {
-      // This would integrate with Resend API or similar email service
-      // For now, we'll just log and mark as email sent
-      console.log('Email notification would be sent:', {
-        userId,
-        type: notification.type,
-        title: notification.title
-      })
+      // 1. Get user's email address
+      const { data: userProfile, error: userError } = await this.supabase
+        .from('user_profiles')
+        .select('email')
+        .eq('user_id', userId)
+        .single();
 
-      // Update notification to mark email as sent
+      if (userError || !userProfile || !userProfile.email) {
+        console.error('Error fetching user email or email is missing:', userError);
+        return false;
+      }
+      
+      // 2. Construct email content
+      const emailHtml = `
+        <div>
+          <h1>${notification.title}</h1>
+          <p>${notification.message}</p>
+          ${notification.action_url ? `<p><a href="${process.env.NEXT_PUBLIC_BASE_URL}${notification.action_url}">View Details</a></p>` : ''}
+          <p><small>You are receiving this because your notification preferences are enabled.</small></p>
+        </div>
+      `;
+
+      // 3. Call the new API route
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: userProfile.email,
+          subject: notification.title,
+          html: emailHtml,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json();
+        console.error('Failed to send email via API route:', errorBody);
+        return false;
+      }
+
+      // 4. Update notification to mark email as sent
       await this.supabase
         .from('notifications')
         .update({ is_email_sent: true })
-        .eq('id', notification.id)
+        .eq('id', notification.id);
 
-      return true
+      console.log(`Email notification sent successfully to ${userProfile.email}`);
+      return true;
     } catch (error) {
-      console.error('Error sending email notification:', error)
-      return false
+      console.error('Error in sendEmailNotification:', error);
+      return false;
     }
   }
 
