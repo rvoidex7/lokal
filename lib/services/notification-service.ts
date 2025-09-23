@@ -61,7 +61,13 @@ class NotificationService {
 
       // Send email if user has email notifications enabled
       if (preferences?.email_notifications && this.shouldSendEmail(data.type, preferences)) {
-        await this.sendEmailNotification(data.userId, notification)
+        await this.sendEmailNotification(data.userId, notification);
+      }
+      
+      // Send SMS if user has SMS notifications enabled
+      // Note: We'd need a similar shouldSendSms method if logic differs
+      if (preferences?.sms_notifications) {
+        await this.sendSmsNotification(data.userId, notification);
       }
 
       return notification
@@ -551,6 +557,52 @@ class NotificationService {
       return true;
     } catch (error) {
       console.error('Error in sendEmailNotification:', error);
+      return false;
+    }
+  }
+
+  private async sendSmsNotification(userId: string, notification: Notification): Promise<boolean> {
+    try {
+      // 1. Get user's phone number
+      const { data: userProfile, error: userError } = await this.supabase
+        .from('user_profiles')
+        .select('phone_number')
+        .eq('user_id', userId)
+        .single();
+
+      if (userError || !userProfile || !userProfile.phone_number) {
+        // Not an error, just means user doesn't have a phone number.
+        if (userError && userError.code !== 'PGRST116') { // PGRST116 means no rows found
+          console.error('Error fetching user phone number:', userError);
+        }
+        return false;
+      }
+      
+      // 2. Construct SMS body - keep it concise
+      const smsBody = `${notification.title}: ${notification.message}`;
+
+      // 3. Call the new SMS API route
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-sms`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: userProfile.phone_number,
+          body: smsBody,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json();
+        console.error('Failed to send SMS via API route:', errorBody);
+        return false;
+      }
+      
+      console.log(`SMS notification sent successfully to ${userProfile.phone_number}`);
+      return true;
+    } catch (error) {
+      console.error('Error in sendSmsNotification:', error);
       return false;
     }
   }

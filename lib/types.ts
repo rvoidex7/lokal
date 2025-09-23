@@ -319,6 +319,7 @@ export interface UserPreferences {
   user_id: string
   email_notifications: boolean
   push_notifications: boolean
+  sms_notifications: boolean // Added for SMS
   activity_reminders_24h: boolean
   activity_reminders_1h: boolean
   activity_updates: boolean
