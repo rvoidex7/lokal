@@ -4,7 +4,7 @@ This file tracks features that are planned for future releases of the Lokal Cafe
 
 ## Future Enhancements
 
-- [ ] Email/SMS notifications for vouchers and announcements
+- [x] Email/SMS notifications for vouchers and announcements
 - [ ] Mobile app integration
 - [ ] QR code scanning for voucher redemption
 - [ ] Advanced analytics and reporting
