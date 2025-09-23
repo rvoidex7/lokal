@@ -29,6 +29,7 @@ import {
 import { formatDistanceToNow } from "date-fns"
 import { tr } from "date-fns/locale"
 import type { CoffeeVoucher, UserProfile } from "@/lib/types"
+import QRCode from "react-qr-code";
 
 export function CoffeeVoucherDisplay() {
   const { user } = useAuth()
@@ -230,8 +231,10 @@ export function CoffeeVoucherDisplay() {
             </DialogHeader>
             <div className="space-y-4">
               <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg text-center">
-                <Coffee className="w-16 h-16 mx-auto mb-4 text-amber-600" />
-                <p className="text-2xl font-bold font-mono mb-2">
+                <div style={{ background: 'white', padding: '16px', display: 'inline-block' }}>
+                    <QRCode value={selectedVoucher.voucher_code} />
+                </div>
+                <p className="text-2xl font-bold font-mono mt-4 mb-2">
                   {selectedVoucher.voucher_code}
                 </p>
                 <Badge className="mb-4">
