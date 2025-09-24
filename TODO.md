@@ -7,7 +7,7 @@ This file tracks features that are planned for future releases of the Lokal Cafe
 
 *   **Separate Events (`Aktiviteler`) from Announcements (`Duyurular`):**
     *   The current "Add Announcement" dialog is used for both, which is confusing.
-    *   **Action:** Create a distinct "Create Event" form/dialog with specific fields: `date`, `time`, `location`.
+    *   **Action:** Create a distinct "Create Event" form/dialog with specific fields: `date`, `time`.
     *   **Action:** Ensure the database schema correctly supports these new event-specific fields.
 
 ### 2. Post Announcements
