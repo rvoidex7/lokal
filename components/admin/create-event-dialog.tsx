@@ -75,7 +75,7 @@ export function CreateEventDialog({ onSuccess }: CreateEventDialogProps) {
     setLoading(true)
 
     try {
-      const dateTime = `${formData.date}T${formData.time}`
+      const dateTime = new Date(`${formData.date}T${formData.time}`).toISOString()
       const { data, error } = await supabase.from("activities").insert([
         {
           title: formData.title,
