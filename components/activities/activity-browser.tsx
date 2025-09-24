@@ -253,9 +253,22 @@ export function ActivityBrowser() {
         title: "Giriş Yapmalısınız",
         description: "Aktivitelere katılmak için lütfen giriş yapın.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
+
+    const originalActivities = [...activities];
+    const newActivities = activities.map(a => {
+      if (a.id === activityId) {
+        return {
+          ...a,
+          is_registered: isJoining,
+          participant_count: a.participant_count + (isJoining ? 1 : -1),
+        };
+      }
+      return a;
+    });
+    setActivities(newActivities);
 
     try {
       if (isJoining) {
@@ -266,42 +279,43 @@ export function ActivityBrowser() {
             user_id: user.id,
             user_name: user.email?.split('@')[0] || 'Anonim',
             attended: false,
-          })
+          });
 
-        if (error) throw error
+        if (error) throw error;
 
         toast({
           title: "Başarılı",
           description: "Aktiviteye kaydınız alındı.",
-        })
+        });
       } else {
         const { error } = await supabase
           .from("activity_attendance")
           .delete()
           .eq('activity_id', activityId)
-          .eq('user_id', user.id)
+          .eq('user_id', user.id);
 
-        if (error) throw error
+        if (error) throw error;
 
         toast({
           title: "Başarılı",
           description: "Aktivite kaydınız iptal edildi.",
-        })
+        });
       }
 
-      await fetchActivities()
-      
+      await fetchActivities();
+
     } catch (error) {
-      errorHandler.logError('Error toggling activity participation', error)
+      setActivities(originalActivities);
+      errorHandler.logError('Error toggling activity participation', error);
       toast({
         title: "Hata",
         description: isJoining ? 
           "Aktiviteye katılırken bir hata oluştu." : 
           "Aktiviteden ayrılırken bir hata oluştu.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const clearFilters = () => {
     setSearchQuery("")
