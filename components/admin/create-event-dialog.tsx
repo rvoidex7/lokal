@@ -84,6 +84,12 @@ export function CreateEventDialog({ onSuccess }: CreateEventDialogProps) {
           created_by: user.id,
           date_time: dateTime,
           location: formData.location,
+          activity_type: null,
+          duration_hours: null,
+          max_participants: null,
+          managed_by: null,
+          request_id: null,
+          group_id: null,
         },
       ])
 
@@ -100,6 +106,7 @@ export function CreateEventDialog({ onSuccess }: CreateEventDialogProps) {
       setOpen(false)
       onSuccess()
     } catch (error) {
+      console.error('Detailed Supabase Error:', JSON.stringify(error, null, 2));
       errorHandler.logError('Error creating event', error)
       toast({
         title: "Hata",

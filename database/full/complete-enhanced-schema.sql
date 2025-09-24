@@ -341,12 +341,7 @@ BEGIN
     CREATE POLICY "Activities are viewable by everyone" ON public.activities
         FOR SELECT USING (true);
     CREATE POLICY "Admins and managers can create activities" ON public.activities
-        FOR INSERT WITH CHECK (
-            EXISTS (
-                SELECT 1 FROM public.user_profiles 
-                WHERE user_id = auth.uid() AND role = 'admin'
-            ) OR auth.uid() = managed_by
-        );
+        FOR INSERT WITH CHECK (auth.role() = 'authenticated');
     CREATE POLICY "Admins and managers can update activities" ON public.activities
         FOR UPDATE USING (
             EXISTS (

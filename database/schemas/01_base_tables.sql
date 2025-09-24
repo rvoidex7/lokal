@@ -68,6 +68,43 @@ CREATE POLICY "Users can delete their own participation" ON public.katilimcilar
 CREATE POLICY "Etkinlik talepleri are viewable by everyone" ON public.etkinlik_talepleri
     FOR SELECT USING (true);
 
+-- Create activities table for improved activity management
+CREATE TABLE IF NOT EXISTS public.activities (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    activity_type TEXT,
+    date_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    duration_hours DECIMAL(3,1),
+    location TEXT,
+    max_participants INT,
+    image_url TEXT,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    managed_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    request_id UUID REFERENCES public.etkinlik_talepleri(id) ON DELETE SET NULL,
+    group_id UUID REFERENCES public.social_groups(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'upcoming' CHECK (status IN ('upcoming', 'ongoing', 'completed', 'cancelled')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- RLS Policies for activities
+ALTER TABLE public.activities ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Activities are viewable by everyone" ON public.activities
+    FOR SELECT USING (true);
+
+CREATE POLICY "Admins and managers can create activities" ON public.activities
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admins and managers can update activities" ON public.activities
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM public.user_profiles 
+            WHERE user_id = auth.uid() AND role = 'admin'
+        ) OR auth.uid() = managed_by
+    );
+
 CREATE POLICY "Users can insert their own requests" ON public.etkinlik_talepleri
     FOR INSERT WITH CHECK (auth.uid() = requested_by);
 

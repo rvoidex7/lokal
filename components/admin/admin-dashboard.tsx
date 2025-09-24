@@ -8,7 +8,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AddAnnouncementDialog } from "@/components/admin/add-announcement-dialog"
-import { CreateEventDialog } from "@/components/admin/create-event-dialog"
 import { EditAnnouncementDialog } from "@/components/admin/edit-announcement-dialog"
 import { ParticipantsDialog } from "@/components/admin/participants-dialog"
 import { ActivityRequestsDialog } from "@/components/admin/activity-requests-dialog"
@@ -142,7 +141,6 @@ export function AdminDashboard() {
             <h2 className="text-xl font-semibold">Duyurular & Etkinlikler</h2>
             <div className="flex gap-2">
               <AddAnnouncementDialog onSuccess={fetchAnnouncements} />
-              <CreateEventDialog onSuccess={() => { /* TODO: refresh events */ }} />
             </div>
           </div>
 

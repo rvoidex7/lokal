@@ -107,7 +107,7 @@ export function AddAnnouncementDialog({ onSuccess }: AddAnnouncementDialogProps)
       <DialogTrigger asChild>
         <Button className="bg-[#0015ff] hover:bg-[#0015ff]/90">
           <Plus className="w-4 h-4 mr-2" />
-          Duyuru Ekle
+          Etkinlik Oluştur
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
