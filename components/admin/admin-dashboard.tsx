@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AddAnnouncementDialog } from "@/components/admin/add-announcement-dialog"
+import { CreateEventDialog } from "@/components/admin/create-event-dialog"
 import { EditAnnouncementDialog } from "@/components/admin/edit-announcement-dialog"
 import { ParticipantsDialog } from "@/components/admin/participants-dialog"
 import { ActivityRequestsDialog } from "@/components/admin/activity-requests-dialog"
@@ -138,8 +139,11 @@ export function AdminDashboard() {
 
         <TabsContent value="announcements" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Duyurular</h2>
-            <AddAnnouncementDialog onSuccess={fetchAnnouncements} />
+            <h2 className="text-xl font-semibold">Duyurular & Etkinlikler</h2>
+            <div className="flex gap-2">
+              <AddAnnouncementDialog onSuccess={fetchAnnouncements} />
+              <CreateEventDialog onSuccess={() => { /* TODO: refresh events */ }} />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

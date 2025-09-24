@@ -3,12 +3,11 @@
 This file tracks features that are planned for future releases of the Lokal Cafe web application.
 
 ## Top Priority
-### 1. Revise Existing Functional Features
+### 1. Revise Existing Functional Features **DONE!**
 
+* **This is not tested. `Test it` when you can do**
 *   **Separate Events (`Aktiviteler`) from Announcements (`Duyurular`):**
-    *   The current "Add Announcement" dialog is used for both, which is confusing.
-    *   **Action:** Create a distinct "Create Event" form/dialog with specific fields: `date`, `time`.
-    *   **Action:** Ensure the database schema correctly supports these new event-specific fields.
+    *    A new "Create Event" dialog has been created with specific fields for `date`, `time`, and `location`. The admin dashboard has been updated with a button to open this new dialog. The database schema has been verified to be compatible.
 
 ### 2. Post Announcements
 
@@ -21,9 +20,8 @@ This file tracks features that are planned for future releases of the Lokal Cafe
 *   **Current Status:** Partially implemented. The backend seems to use the `activities` table, but the frontend UI for creating events is missing.
 *   **Action:** Develop a new "Create Event" component that allows administrators to add events with all necessary details (date, time, location, description).
 
-### 4. Encourage Participation in Events
+### 4. Encourage Participation in Events **DONE!**
 
-*   **Current Status:** Not fully implemented on the frontend. A backend API at `/api/activities/[id]/join/route.ts` exists for joining an "activity," but there is no button or UI for users to interact with it.
-*   **Action:** Add a "Join Event" or "RSVP" button to event details.
+*   **Current Status:** A "Join/Leave" button has been added to the `ActivityCard` and `ActivityDetailModal` components, allowing users to register for events. The UI provides optimistic updates for a responsive user experience.
 *   **Action:** Display a list of participants for each event to encourage social engagement.
 *   **Action:** Consider creating a "My Events" page for users to track the events they have joined.
