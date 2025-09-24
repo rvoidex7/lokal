@@ -13,7 +13,7 @@ This file tracks features that are planned for future releases of the Lokal Cafe
 ### 2. Post Announcements
 
 *   **Current Status:** Implemented. The `add-announcement-dialog.tsx` component works for creating general announcements.
-*   **File:** `c:\Users\jumbo\OneDrive\Masaüstü\r1\lokal\components\admin\add-announcement-dialog.tsx`
+*   **File:** `@\components\admin\add-announcement-dialog.tsx`
 *   **Action:** No major revisions are needed for announcements, but the UI should be clarified to distinguish it from event creation.
 
 ### 3. Create Events
