@@ -9,16 +9,16 @@ This file tracks features that are planned for future releases of the Lokal Cafe
 *   **Separate Events (`Aktiviteler`) from Announcements (`Duyurular`):**
     *    A new "Create Event" dialog has been created with specific fields for `date`, `time`, and `location`. The admin dashboard has been updated with a button to open this new dialog. The database schema has been verified to be compatible.
 
-### 2. Post Announcements
+### 2. Post Announcements **DONE!**
 
 *   **Current Status:** Implemented. The `add-announcement-dialog.tsx` component works for creating general announcements.
 *   **File:** `@\components\admin\add-announcement-dialog.tsx`
-*   **Action:** No major revisions are needed for announcements, but the UI should be clarified to distinguish it from event creation.
+*   **Action:** The admin UI now has distinct buttons for "Add Announcement" and "Create Event," clarifying their different purposes.
 
-### 3. Create Events
+### 3. Create Events **DONE!**
 
-*   **Current Status:** Partially implemented. The backend seems to use the `activities` table, but the frontend UI for creating events is missing.
-*   **Action:** Develop a new "Create Event" component that allows administrators to add events with all necessary details (date, time, location, description).
+*   **Current Status:** Implemented. A new `create-event-dialog.tsx` component has been developed.
+*   **Action:** The new component allows administrators to add events with all necessary details (title, description, date, time, location, and image). It is accessible from the admin dashboard.
 
 ### 4. Encourage Participation in Events **DONE!**
 
