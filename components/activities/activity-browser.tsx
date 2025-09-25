@@ -263,7 +263,7 @@ export function ActivityBrowser() {
         return {
           ...a,
           is_registered: isJoining,
-          participant_count: a.participant_count + (isJoining ? 1 : -1),
+          participant_count: (a.participant_count || 0) + (isJoining ? 1 : -1),
         };
       }
       return a;

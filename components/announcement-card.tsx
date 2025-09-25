@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { useAuth } from "@/components/auth/auth-context"
@@ -122,7 +123,11 @@ export function AnnouncementCard({ announcement, onParticipationChange }: Announ
       )}
       <CardHeader className="flex-none">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-xl font-bold line-clamp-2 flex-1">{announcement.title}</CardTitle>
+          <CardTitle className="text-xl font-bold line-clamp-2 flex-1">
+            <Link href={`/duyurular/${announcement.id}`} className="hover:underline">
+              {announcement.title}
+            </Link>
+          </CardTitle>
           <Badge variant="outline" className="shrink-0 text-xs">
             <Calendar className="w-3 h-3 mr-1" />
             {new Date(announcement.created_at).toLocaleDateString("tr-TR", {

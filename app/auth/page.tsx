@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 
 export default async function AuthPage() {
   // Server-side guard: if already authenticated, redirect away from /auth
-  const supabase = await createClient()
+  const supabase = createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
