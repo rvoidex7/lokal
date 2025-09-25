@@ -48,7 +48,7 @@ export default function SendVoucherPage() {
     const fetchUsers = async () => {
       const { data, error } = await supabase
         .from("user_profiles")
-        .select("id, full_name, email, phone")
+        .select("id:user_id, full_name, email, phone")
         .order("full_name")
       if (error) {
         errorHandler.logError("Error fetching users", error)
