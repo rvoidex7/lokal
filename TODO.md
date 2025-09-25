@@ -1,120 +1,100 @@
-# Lokal Cafe Web Uygulaması - Geliştirme Yol Haritası
+# Lokal Cafe Web Uygulaması - Geliştirme Yol Haritası (v2)
 
-Bu belge, projenin mevcut durumunu analiz ederek belirlenen görevleri, hata düzeltmelerini ve gelecek için önerileri içerir. Görevler, projenin "hızlı deploy" felsefesine uygun olarak önceliklendirilmiştir. Her görev, sorunu, çözüm önerisini ve potansiyel test adımlarını detaylı bir şekilde açıklamaktadır.
+Bu belge, projenin hem statik hem de simüle edilmiş dinamik analizleri sonucu belirlenen görevleri, hata düzeltmelerini ve gelecek için önerileri içerir. Görevler, projenin "hızlı deploy" felsefesine ve gerçek dünya kullanım senaryolarına uygun olarak önceliklendirilmiştir.
 
 ---
 
 ## 1. Hızlı Deploy - Kritik Önemli Halledilmesi Gerekenler
 
-Bu bölümdeki görevler, uygulamanin stabil, güvenli ve kullanilabilir bir şekilde ilk sürümünün yayinlanmasi için tamamlanmasi zorunlu olan maddeleri içerir.
+Bu bölümdeki görevler, uygulamanın stabil, güvenli, fonksiyonel ve kullanılabilir bir şekilde ilk sürümünün yayınlanması için **tamamlanması mutlak zorunlu olan** maddeleri içerir.
 
-### 1.1. Güvenlik: Admin Rolü Atama Mekanizması Eksikliği
+### 1.1. Fonksiyonellik & Güvenlik: Üyelik Talep Sisteminin Entegrasyonu (EN KRİTİK)
 
-- **Sorun:** Mevcut sistemde `user_profiles` tablosunda bir `role` sütunu ('admin', 'member') bulunuyor. Ancak, bir kullanıcıyı 'admin' olarak atamak için standart ve güvenli bir mekanizma (API endpoint, admin paneli arayüzü vb.) bulunmuyor. Bu durum, şu anda veritabanına manuel müdahale gerektiriyor ki bu hem güvensiz hem de sürdürülebilir değil.
+- **Sorun:** Proje belgelerinde ve veritabanı şemasında (`membership_requests` tablosu) açıkça belirtilmesine rağmen, mevcut kod bu sistemi tamamen atlayarak kullanıcıların gruplara **doğrudan** katılmasına izin vermektedir. Bu, hem projenin temel bir özelliğinin eksik olması hem de istemciden doğrudan veritabanına yazma işlemi yapıldığı için ciddi bir güvenlik açığıdır.
 - **Çözüm Önerisi:**
-    1.  **Güvenli API Endpoint'i Oluşturma:** Sadece mevcut adminlerin kullanabileceği bir API endpoint'i (`/api/admin/set-user-role`) oluşturulmalı. Bu endpoint, `target_user_id` ve `new_role` gibi parametreler almalıdır.
-    2.  **RLS Politikası Güncellemesi:** Bu endpoint'in arkasındaki Supabase Edge Function veya sunucu tarafı kod, işlemi yapan kullanıcının 'admin' rolüne sahip olup olmadığını kontrol etmelidir.
-    3.  **Admin Paneli Arayüzü:** Admin panelinde, kullanıcıları listeleyen ve yanlarında rolünü değiştirmeye yarayan bir arayüz (örneğin bir dropdown menü) eklenmeli. Bu arayüz, yukarıda bahsedilen güvenli API endpoint'ini çağırmalıdır.
+    1.  **Mevcut Doğrudan Katılma Mantığını Kaldır:** `SocialGroupCard.tsx` içerisindeki `handleJoinGroup` fonksiyonu tamamen kaldırılmalı veya yeniden düzenlenmelidir.
+    2.  **API Endpoint'leri Oluştur:**
+        -   `POST /api/groups/[groupId]/request-membership`: Gruba katılma isteği gönderen bir API rotası oluşturulmalı.
+        -   `POST /api/admin/membership-requests`: Adminin bir talebi onaylaması (`approve`) veya reddetmesi (`reject`) için bir API rotası oluşturulmalı.
+    3.  **Frontend Arayüzünü Güncelle:**
+        -   "Katıl" butonu, "Katılma Talebi Gönder" olarak değiştirilmeli ve bu butona tıklandığında yeni API endpoint'ini çağıran bir diyalog (örn: `MembershipRequestDialog`) açılmalıdır.
+        -   Admin panelinde, bekleyen üyelik taleplerini listeleyen ve yöneticinin bunları onaylayıp/reddedebileceği bir arayüz (`/admin/membership-requests`) oluşturulmalıdır.
 - **Test Senaryosu (Delege Edilecek Prompt):**
-    > Jules, lütfen aşağıdaki görevi gerçekleştir:
-    > 1.  `app/api/admin/set-user-role/route.ts` adında yeni bir API rotası oluştur.
-    > 2.  Bu rota, `POST` metodu ile `targetUserId` ve `role` ('admin' veya 'member') parametrelerini alsın.
-    > 3.  İsteği yapan kullanıcının `user_profiles` tablosunda 'admin' rolüne sahip olup olmadığını kontrol et. Yetkisi yoksa 403 (Forbidden) hatası döndür.
-    > 4.  Yetkisi varsa, `targetUserId`'ye sahip kullanıcının rolünü veritabanında güncelle.
-    > 5.  `app/admin/users/page.tsx` gibi bir sayfada, tüm kullanıcıları listeleyen ve rollerini değiştirmeye olanak tanıyan bir arayüz oluştur. Bu arayüz, oluşturduğun API'yi kullansın.
+    > Jules, lütfen "Üyelik Talep Sistemi"ni entegre et:
+    > 1.  `SocialGroupCard.tsx`'deki `handleJoinGroup` fonksiyonunu, `membership_requests` tablosuna yeni bir "pending" kayıt oluşturan bir API çağrısıyla değiştir.
+    > 2.  `/admin` altında, bekleyen talepleri listeleyen, "Onayla" ve "Reddet" butonları içeren bir sayfa oluştur.
+    > 3.  Onaylama işlemi, `membership_requests` tablosundaki durumu güncellemeli ve `group_members` tablosuna yeni bir kayıt eklemelidir. Bu işlemler transaction içinde yapılmalıdır.
 
-### 1.2. Fonksiyonellik: Doğum Günü Kuponlarının Otomatik Üretimi İçin Zamanlanmış Görev (Cron Job) Kurulumu
+### 1.2. Güvenlik: Admin Rolü Atama Mekanizması Eksikliği
 
-- **Sorun:** `05_enhancements.sql` dosyasında `generate_birthday_vouchers()` adında bir PostgreSQL fonksiyonu tanımlanmış. Bu fonksiyonu her gün otomatik olarak tetikleyecek bir mekanizma (cron job) kurulumu eksik. Bu olmadan, kuponlar otomatik olarak üretilmeyecektir.
+- **Sorun:** Bir kullanıcıyı 'admin' olarak atamak için standart ve güvenli bir mekanizma bulunmuyor. Bu durum, veritabanına manuel müdahale gerektiriyor.
 - **Çözüm Önerisi:**
-    1.  **Supabase Cron Jobs Kullanımı:** Supabase'in sunduğu `pg_cron` eklentisi veya "Scheduled Functions" özelliği kullanılmalı.
-    2.  **Zamanlama Kurulumu:** Her gün gece yarısı (örneğin, `0 0 * * *` cron ifadesiyle) `generate_birthday_vouchers()` fonksiyonunu çağıran bir cron job tanımlanmalı.
-    3.  **SQL Komutu:** Cron job'un çalıştıracağı komut `SELECT generate_birthday_vouchers();` olmalıdır.
-- **Yapılacaklar:**
-    - Supabase Dashboard üzerinden "Database" -> "Cron Jobs" bölümüne gidilir.
-    - "New Job" denilerek yeni bir zamanlanmış görev oluşturulur.
-    - İsim: `Daily Birthday Voucher Generation`.
-    - Cron Expression: `0 0 * * *` (Her gün gece yarısı UTC).
-    - SQL: `SELECT generate_birthday_vouchers();`
-    - Bu kurulumun yapıldığına dair `README.md` dosyasına bir not eklenmelidir.
-
-### 1.3. Veri Bütünlüğü: `activities` Tablosunun İki Kez Tanımlanması
-
-- **Sorun:** Hem `01_base_tables.sql` hem de `05_enhancements.sql` dosyalarında `CREATE TABLE IF NOT EXISTS public.activities` ifadesi bulunuyor. Bu durum, şemaların ayrı ayrı çalıştırılması durumunda bir hataya yol açmasa da, kod tekrarına ve kafa karışıklığına neden oluyor.
-- **Çözüm Önerisi:**
-    1.  `01_base_tables.sql` dosyasındaki `activities` tablosu tanımı ve ilgili RLS politikaları tamamen kaldırılmalıdır.
-    2.  Tablonun tek ve doğru tanımı `05_enhancements.sql` dosyasında bırakılmalıdır.
+    1.  **Güvenli API Endpoint'i Oluşturma:** Sadece mevcut adminlerin kullanabileceği bir API endpoint'i (`/api/admin/set-user-role`) oluşturulmalı.
+    2.  **Admin Paneli Arayüzü:** Admin panelinde, kullanıcıları listeleyen ve rollerini değiştirmeye yarayan bir arayüz eklenmeli.
 - **Test Senaryosu (Delege Edilecek Prompt):**
-    > Jules, `database/schemas/01_base_tables.sql` dosyasını aç ve `CREATE TABLE IF NOT EXISTS public.activities` ile başlayan bölümü ve bu tabloya ait tüm RLS politikalarını sil.
+    > Jules, `app/api/admin/set-user-role/route.ts` adında, sadece adminlerin erişebileceği ve bir kullanıcının rolünü güncelleyebileceği bir API rotası oluştur. Ardından bu API'yi kullanan bir admin arayüzü tasarla.
+
+### 1.3. Fonksiyonellik: Doğum Günü Kuponu Cron Job Kurulumu
+
+- **Sorun:** `generate_birthday_vouchers()` fonksiyonunu otomatik tetikleyecek bir mekanizma eksik.
+- **Çözüm Önerisi:** Supabase'in "Scheduled Functions" özelliği kullanılarak her gün çalışacak bir cron job tanımlanmalı.
+- **Yapılacaklar:** Supabase Dashboard üzerinden `0 0 * * *` zamanlamasıyla `SELECT generate_birthday_vouchers();` komutunu çalıştıran bir cron job oluşturulmalı.
 
 ---
 
 ## 2. Backend Önerileri
 
-Bu bölüm, uygulamanın performansını, güvenliğini ve ölçeklenebilirliğini artıracak backend odaklı iyileştirmeleri içerir.
+### 2.1. Performans & Ölçeklenebilirlik: Grup Listeleme ve Filtrelemenin Sunucu Tarafına Taşınması
 
-### 2.1. Optimizasyon: Veritabanı Fonksiyonlarının Güvenlik ve Performans İyileştirmesi
-
-- **Sorun:** `check_loyalty_voucher` ve `generate_birthday_vouchers` gibi fonksiyonlar büyük tablolar üzerinde sorgular çalıştırabilir ve kullanıcı sayısı arttıkça yavaşlayabilir.
+- **Sorun:** Sosyal gruplar sayfasında, **tüm** aktif gruplar veritabanından çekilip filtreleme (arama, kategori, gün) istemci tarafında yapılıyor. Grup sayısı arttıkça bu durum sayfa yükünü aşırı yavaşlatacak ve kötü bir kullanıcı deneyimine yol açacaktır.
 - **Çözüm Önerisi:**
-    1.  **`generate_birthday_vouchers` Optimizasyonu:** Fonksiyonun `SECURITY DEFINER` olarak çalıştırılması, RLS politikalarını bypass ederek daha performanslı çalışmasını sağlayabilir. Bu dikkatli bir şekilde, fonksiyonun içindeki sorguların güvenli olduğu doğrulandıktan sonra yapılmalıdır.
-    2.  **`generate_voucher_code` İyileştirmesi:** Mevcut fonksiyon basit bir rastgele karakter üretecidir. Çakışma ihtimalini ortadan kaldırmak için `LOKAL-` ön eki ile birlikte `gen_random_uuid()`'nin bir parçasını kullanacak şekilde güncellenmelidir.
-- **Yapılacaklar:**
-    - `generate_voucher_code` fonksiyonunu `gen_random_uuid()` kullanacak şekilde güncelle.
-    - `generate_birthday_vouchers` fonksiyonunu `SECURITY DEFINER` olarak tanımla.
+    1.  **Sunucu Bileşenine Dönüştürme:** `SocialGroupsGrid.tsx` bileşeni, bir sunucu bileşenine (`async function`) dönüştürülmeli.
+    2.  **Dinamik Sorgu Oluşturma:** Filtreleme parametreleri (arama terimi, kategori vb.) URL arama parametreleri (`URLSearchParams`) üzerinden alınmalı ve bu parametrelere göre dinamik bir Supabase sorgusu oluşturulmalıdır. Sorgu, `.ilike()`, `.eq()` gibi Supabase filtrelerini kullanarak sadece ilgili veriyi çekmelidir.
+    3.  **Verimsizliği Ortadan Kaldırma:** Bu sayede, veritabanından sadece kullanıcının görmek istediği veriler çekilir, bu da hem ilk yükleme süresini kısaltır hem de ölçeklenebilirliği artırır.
 
-### 2.2. Güvenlik: RLS Politikalarının Detaylandırılması
+### 2.2. Veri Bütünlüğü: `group_members` Tablosunun Normalleştirilmesi
 
-- **Sorun:** Bazı RLS politikaları (örn: `Club comments are viewable by everyone`) çok genel ve beklenen gizliliği sağlamıyor olabilir. Kulübe özel duyuruların ve yorumların sadece üyeler tarafından görülmesi gerekir.
+- **Sorun:** `group_members` tablosu, `user_profiles` tablosunda zaten mevcut olan `user_name` ve `user_email` bilgilerini gereksiz yere kopyalamaktadır. Bu, veri tekrarına yol açar ve veri tutarsızlığına neden olabilir.
 - **Çözüm Önerisi:**
-    1.  **Grup Yorumları İçin RLS:** `club_comments` için `SELECT` politikasını, sadece grup üyelerinin yorumları görebileceği şekilde güncelle.
-    2.  **Duyurular İçin RLS:** `duyurular` tablosunun `SELECT` politikasını, `is_club_only` alanına göre dinamik hale getir. Herkese açık duyurular herkes tarafından, kulübe özel olanlar ise sadece o kulübün üyeleri tarafından görülebilmelidir.
-- **Test Senaryosu (Delege Edilecek Prompt):**
-    > Jules, `05_enhancements.sql` dosyasındaki RLS politikalarını güncelle:
-    > 1. `club_comments` tablosunun `SELECT` politikasını, sadece ilgili grubun üyelerinin yorumları görebileceği şekilde değiştir.
-    > 2. `duyurular` tablosunun `SELECT` politikasını, `is_club_only` alanı `true` ise sadece ilgili grup üyelerinin görebileceği, `false` ise herkesin görebileceği şekilde düzenle.
+    1.  **Veritabanı Şemasını Güncelle:** `group_members` tablosundan `user_name` ve `user_email` sütunları kaldırılmalı. Tabloda sadece `group_id` ve `user_id` kalmalıdır.
+    2.  **Kodu Güncelle:** Uygulama içinde kullanıcı adı gibi bilgilere ihtiyaç duyulduğunda, `group_members` ve `user_profiles` tabloları arasında `JOIN` sorgusu yapılmalıdır.
+
+### 2.3. Veri Bütünlüğü: `activities` Tablosunun İki Kez Tanımlanması
+
+- **Sorun:** `activities` tablosu hem `01_base_tables.sql` hem de `05_enhancements.sql` dosyalarında tanımlanmış.
+- **Çözüm Önerisi:** `01_base_tables.sql` dosyasındaki `activities` tanımı ve ilgili RLS politikaları tamamen kaldırılmalıdır.
 
 ---
 
 ## 3. Frontend ve Dizayn Önerileri
 
-Bu bölüm, kullanıcı deneyimini (UX) ve arayüz tasarımını (UI) iyileştirmeye yönelik önerileri içerir.
+### 3.1. UX Tutarlılığı: Onay Diyaloglarının Modernleştirilmesi
 
-### 3.1. UX İyileştirmesi: Gerçek Zamanlı Bildirim Sistemi
+- **Sorun:** Gruptan ayrılma gibi kritik işlemler için tarayıcının standart `confirm()` diyaloğu kullanılıyor. Bu, projenin modern tasarım diliyle (shadcn/ui) uyumsuzdur.
+- **Çözüm Önerisi:** `confirm()` diyaloğu, projenin tasarım sistemine uygun, şık bir `<AlertDialog>` bileşeni ile değiştirilmelidir. Bu, kullanıcıya daha tutarlı ve profesyonel bir deneyim sunar.
 
-- **Sorun:** Kullanıcı arayüzünde (örneğin bir çan ikonu ile) gerçek zamanlı bir bildirim sistemi bulunmuyor. Bir kullanıcının grup üyeliği onaylandığında veya yeni bir kupon kazandığında anında haberdar olması gerekir.
-- **Çözüm Önerisi:**
-    1.  **`notifications` Tablosu Oluşturma:** Veritabanında `user_id`, `message`, `link`, `is_read` gibi sütunlar içeren bir `notifications` tablosu oluştur.
-    2.  **Supabase Realtime Kullanımı:** Kullanıcı giriş yaptığında, bu `notifications` tablosuna kendi `user_id`'si ile abone ol.
-    3.  **Tetikleyiciler ile Bildirim Oluşturma:** Üyelik onayı, yeni kupon gibi olaylar gerçekleştiğinde bu `notifications` tablosuna yeni bir kayıt ekleyen mekanizmalar kur.
-    4.  **UI Entegrasyonu:** Arayüzde, okunmamış bildirim sayısını gösteren bir çan ikonu ve bildirimleri listeleyen bir panel ekle.
+### 3.2. UX İyileştirmesi: Gerçek Zamanlı Bildirim Sistemi
 
-### 3.2. UI İyileştirmesi: Admin Panelinin Geliştirilmesi
-
-- **Sorun:** Admin paneli, tüm yönetimsel görevler için merkezi ve kullanıcı dostu bir arayüz sunmuyor olabilir.
-- **Çözüm Önerisi:**
-    1.  **Merkezi Dashboard:** `/admin` ana sayfasında, son talepler ve doğum günleri gibi önemli metrikleri gösteren bir "snapshot" dashboard'u oluştur.
-    2.  **Ayrı Yönetim Sayfaları:** Sol menüde "Kullanıcılar", "Gruplar", "Aktiviteler", "Kuponlar" gibi net ve ayrı yönetim sayfaları oluştur.
-    3.  **Arama ve Filtreleme:** Her yönetim sayfasında (örneğin, kullanıcılar listesi) arama ve filtreleme özellikleri ekle.
+- **Sorun:** Kullanıcı arayüzünde gerçek zamanlı bir bildirim sistemi (yeni kupon, üyelik onayı vb. için) bulunmuyor.
+- **Çözüm Önerisi:** Veritabanında bir `notifications` tablosu oluşturulmalı ve Supabase Realtime kullanılarak kullanıcıya anlık bildirimler gösteren bir UI bileşeni (çan ikonu vb.) eklenmelidir.
 
 ---
 
 ## 4. DevOps ve Dokümantasyon
 
-Bu bölüm, projenin geliştirme, test ve dağıtım süreçlerini iyileştirmeye yönelik görevleri içerir.
+### 4.1. Geliştirici Deneyimi (DX): Sağlam Başlangıç (Robust Bootstrap) Süreci
 
-### 4.1. Dokümantasyon: Veritabanı Şeması Görselleştirmesi
-
-- **Sorun:** Veritabanı şemasını anlamak için tüm SQL dosyalarını tek tek okumak gerekiyor. Görsel bir diyagram, şemayı anlamayı kolaylaştıracaktır.
+- **Sorun:** Projenin başlangıç süreci kırılgandır. `.env.local` dosyası eksik olduğunda uygulama sessizce çökmekte ve port çakışmaları geliştiricinin zamanını almaktadır.
 - **Çözüm Önerisi:**
-    1.  **Araç Seçimi:** dbdiagram.io veya Supabase'in kendi şema görselleştirme aracı kullanılabilir.
-    2.  **Diyagram Oluşturma:** Tüm tablolar ve aralarındaki ilişkiler görselleştirilmeli.
-    3.  **Projeye Ekleme:** Oluşturulan diyagramın bir ekran görüntüsü `README.md`'nin sonuna veya ayrı bir `DATABASE.md` dosyasına eklenmelidir.
+    1.  **Ortam Değişkeni Doğrulaması:** Uygulama başlangıcında, gerekli tüm ortam değişkenlerinin mevcut olup olmadığını kontrol eden bir mekanizma eklenmeli. Eksik değişkenler varsa, uygulama çökmemeli, bunun yerine hangi değişkenlerin eksik olduğunu belirten açıklayıcı bir hata mesajı vermelidir.
+    2.  **Port Temizleme Script'i:** `package.json` dosyasına, geliştirme ortamında sıkışmış sunucu işlemlerini temizleyen, platformdan bağımsız (cross-platform) bir script (`pnpm kill-port` gibi) eklenmelidir.
 
 ### 4.2. Geliştirme Süreci: Test Ortamı ve Seed Verisi
 
 - **Sorun:** Geliştirme ve test süreçlerini hızlandırmak için, veritabanını hızlıca bilinen bir duruma getirecek "seed" verisine ihtiyaç var.
-- **Çözüm Önerisi:**
-    1.  **Seed Script'i Oluşturma:** Projenin kök dizininde `database/seed.sql` adında bir script oluşturulmalı.
-    2.  **Örnek Veri:** Bu script, birkaç test kullanıcısı (admin ve normal üye), sosyal gruplar, sahte aktiviteler ve duyurular oluşturmalıdır.
-    3.  **Çalıştırma Talimatları:** `README.md` dosyasına, bu seed script'inin nasıl çalıştırılacağına dair talimatlar (`pnpm db:seed` gibi) eklenmelidir.
+- **Çözüm Önerisi:** Birkaç test kullanıcısı, grup, aktivite vb. oluşturan bir `database/seed.sql` script'i hazırlanmalı ve `README.md`'ye çalıştırma talimatları eklenmelidir.
+
+### 4.3. Dokümantasyon: Veritabanı Şeması Görselleştirmesi
+
+- **Sorun:** Veritabanı şemasını anlamak için tüm SQL dosyalarını okumak gerekiyor.
+- **Çözüm Önerisi:** dbdiagram.io gibi bir araçla şema görselleştirilmeli ve diyagram projeye eklenmelidir.
