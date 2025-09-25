@@ -81,11 +81,13 @@ export default function SendVoucherPage() {
 
     try {
       // 1. Generate Voucher
+      const voucherCode = `LOKAL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       const { data: voucherData, error: voucherError } = await supabase
-        .from("vouchers")
+        .from("coffee_vouchers")
         .insert({
           user_id: selectedUserId,
-          voucher_type: voucherType,
+          voucher_code: voucherCode,
+          reason: "special", // Or derive from voucherType if needed
           expires_at: new Date(
             Date.now() + 30 * 24 * 60 * 60 * 1000
           ).toISOString(), // 30 days expiry
