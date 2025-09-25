@@ -14,7 +14,6 @@ import { ActivityTimeline } from "@/components/dashboard/activity-timeline"
 import { LetterHistory } from "@/components/dashboard/personal-letters/letter-history"
 import { ActivityManager } from "@/components/dashboard/activity-manager"
 import { GroupManager } from "@/components/dashboard/group-manager"
-import { ActivityNotifications, NotificationBell } from "@/components/dashboard/activity-notifications"
 import { useToast } from "@/hooks/use-toast"
 import { 
   Users, 
@@ -177,66 +176,13 @@ export default function DashboardPage() {
               Topluluk aktivitelerinizi ve kişisel deneyimlerinizi buradan yönetebilirsiniz.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <NotificationBell 
-              unreadCount={stats.unreadNotifications}
-              onClick={() => setShowNotifications(!showNotifications)}
-            />
-          </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Katıldığım Gruplar"
-          value={stats.totalGroups}
-          icon={Users}
-          description="Aktif grup üyelikleriniz"
-        />
-        <StatCard
-          title="Katıldığım Etkinlikler"
-          value={stats.totalActivitiesAttended}
-          icon={Calendar}
-          description="Toplam katılım sayınız"
-        />
-        <StatCard
-          title="Yazılan Mektuplar"
-          value={stats.totalLettersWritten}
-          icon={FileText}
-          description="Kişisel mektup sayınız"
-        />
-        <StatCard
-          title="Yaklaşan Etkinlikler"
-          value={stats.upcomingActivities}
-          icon={Clock}
-          description="Gelecek aktiviteler"
-        />
-      </div>
-
-      {/* Coffee Vouchers Section */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Kahve Kuponlarım</h2>
-        <CoffeeVoucherDisplay />
-      </div>
-
-      {/* Notifications Panel */}
-      {showNotifications && (
-        <ActivityNotifications />
-      )}
-
       {/* Main Dashboard Content */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Genel Bakış</TabsTrigger>
-          <TabsTrigger value="notifications">
-            Bildirimler
-            {stats.unreadNotifications > 0 && (
-              <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1rem] h-4 flex items-center justify-center">
-                {stats.unreadNotifications > 99 ? '99+' : stats.unreadNotifications}
-              </span>
-            )}
-          </TabsTrigger>
           <TabsTrigger value="social-groups">Sosyal Gruplar</TabsTrigger>
           <TabsTrigger value="activities">Aktiviteler</TabsTrigger>
           <TabsTrigger value="letters">Mektuplarım</TabsTrigger>
@@ -246,10 +192,6 @@ export default function DashboardPage() {
 
         <TabsContent value="overview" className="space-y-4">
           <DashboardWidgets />
-        </TabsContent>
-
-        <TabsContent value="notifications">
-          <ActivityNotifications />
         </TabsContent>
 
         <TabsContent value="social-groups">

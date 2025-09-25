@@ -17,16 +17,19 @@ import {
   Users, 
   FileText, 
   Gift,
-  TrendingUp,
   Activity,
   Star,
   ArrowRight,
   MapPin,
-  MessageCircle
+  MessageCircle,
+  Coffee,
+  Target,
+  Trophy
 } from "lucide-react"
 import { format, formatDistanceToNow, isToday, isTomorrow } from "date-fns"
 import { tr } from "date-fns/locale"
 import type { Activity as ActivityType, SocialGroup, PersonalLetter, UserProfile } from "@/lib/types"
+import { CoffeeVoucherDisplay } from "@/components/coffee-voucher-display"
 
 interface DashboardData {
   upcomingActivities: ActivityType[]
@@ -383,54 +386,20 @@ export function DashboardWidgets() {
           </CardContent>
         </Card>
 
-        {/* Personal Stats & Progress */}
+        {/* Kahve Kuponlarım + Sadakat Programı (Merged) */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              İstatistiklerim
+              <Coffee className="w-5 h-5" />
+              Kahve & Sadakat
             </CardTitle>
             <CardDescription>
-              Topluluk katılımınızın özeti
+              Aktif kuponlarınız ve sadakat ilerlemeniz
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Toplam Etkinlik Katılımı</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  {data.profile?.activity_attendance_count || 0}
-                </span>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Kazanılan Kupon</span>
-                <span className="text-2xl font-bold text-green-600">
-                  {data.profile?.coffee_voucher_count || 0}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Yazılan Mektup</span>
-                <span className="text-2xl font-bold text-purple-600">
-                  {data.recentLetters.length}
-                </span>
-              </div>
-
-              {/* Loyalty Progress */}
-              <div className="pt-4 border-t">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Sonraki Kupon</span>
-                  <span className="text-sm text-muted-foreground">
-                    {((data.profile?.activity_attendance_count || 0) % 6)} / 6 aktivite
-                  </span>
-                </div>
-                <Progress value={((data.profile?.activity_attendance_count || 0) % 6) * (100 / 6)} className="h-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  {6 - ((data.profile?.activity_attendance_count || 0) % 6)} aktiviteye daha katılın, kahve kuponu kazanın!
-                </p>
-              </div>
-            </div>
+            {/* Compact variant merges vouchers + loyalty into single card content */}
+            <CoffeeVoucherDisplay variant="compact" />
           </CardContent>
         </Card>
       </div>
