@@ -77,12 +77,11 @@ export function FeatureSection() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Neden <span className="text-[#0015ff]">Lokal</span>?
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Yerel topluluklar oluşturmak ve anlamlı bağlantılar kurmak için tasarlandık.<br className="hidden md:block"/>Birlikte daha güzel deneyimler
-            yaşayın.
+          <h2 className="text-3xl font-medium md:text-4xl lg:text-5xl mb-6">Neden Lokal?</h2>
+          <p className="max-w-lg text-muted-foreground mx-auto">
+            Yerel topluluklar oluşturmak ve anlamlı bağlantılar kurmak için tasarlandık.
+            <br className="hidden md:block" />
+            Birlikte daha güzel deneyimler yaşayın.
           </p>
         </motion.div>
 

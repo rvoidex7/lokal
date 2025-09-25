@@ -33,7 +33,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <LandingHero />
-      <FeatureSection />
       <Gallery4
         title="Ne sunuyoruz?"
         description="Aktivitelerimiz ve deneyimlerimizden bir seçki. Atölyelere ve kulüplerimize katılarak yeni hobiler edinin."
@@ -57,7 +56,7 @@ export default function HomePage() {
             title: "Dokulu Tablo Atölyesi",
             description: "Farklı materyallerle dokulu sanat çalışmaları.",
             href: "/aktiviteler",
-            image: "/swipe3.jpeg",
+            image: "/tablo.jpeg",
           },
           {
             id: "seramik-atolyesi",
@@ -82,6 +81,8 @@ export default function HomePage() {
           },
         ]}
       />
+      <FeatureSection />
+      
     </div>
   )
 }
