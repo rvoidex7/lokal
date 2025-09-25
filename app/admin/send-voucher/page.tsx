@@ -47,7 +47,7 @@ export default function SendVoucherPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("user_profiles")
         .select("id, full_name, email, phone")
         .order("full_name")
       if (error) {

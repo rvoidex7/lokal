@@ -22,9 +22,8 @@ export const createErrorHandler = (): ErrorHandler => {
         }
       } else if (error && typeof error === 'object') {
         // Handle Supabase errors and other object errors
+        // Safely extract known properties instead of spreading the whole error object
         errorDetails = {
-          ...error,
-          // Extract specific Supabase error fields if present
           message: (error as any).message || 'Unknown error',
           code: (error as any).code,
           details: (error as any).details,
