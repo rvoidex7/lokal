@@ -12,7 +12,7 @@ import { AnnouncementParticipationButton } from "../../../components/announcemen
 type Params = { params: Promise<{ id: string }> }
 
 async function getAnnouncement(id: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from("duyurular")
     .select(
