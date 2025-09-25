@@ -31,7 +31,7 @@ const exampleImages = [
     title: "Rippling Crystal Blue Water",
   },
   {
-    url: "/swipe5.jpeg",
+    url: "/tablo2.jpeg",
     link: "#",
     author: "Serhii Tyaglovsky",
     title: "Mann im schwarzen Hemd unter blauem Himmel",
