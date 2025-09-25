@@ -16,8 +16,8 @@ function validateEnvVars() {
   return { url, anonKey }
 }
 
-export function createClient(providedCookieStore?: any) {
-  const cookieStore = providedCookieStore ?? cookies()
+export async function createClient(providedCookieStore?: any) {
+  const cookieStore = providedCookieStore ?? (await cookies())
   const { url, anonKey } = validateEnvVars()
 
   return createServerClient(url, anonKey, {
