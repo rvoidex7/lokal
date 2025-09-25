@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { useAuth } from "@/components/auth/auth-context"
@@ -29,6 +30,7 @@ interface AnnouncementCardProps {
 }
 
 export function AnnouncementCard({ announcement, onParticipationChange }: AnnouncementCardProps) {
+  const router = useRouter()
   const { user } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -145,19 +147,29 @@ export function AnnouncementCard({ announcement, onParticipationChange }: Announ
         </div>
       </CardContent>
       <CardFooter className="flex-none">
-        <Button
-          onClick={handleParticipation}
-          disabled={loading}
-          variant={isParticipating ? "outline" : "default"}
-          className={`w-full transition-all duration-200 ${
-            isParticipating
-              ? "border-[#0015ff] text-[#0015ff] hover:bg-[#0015ff] hover:text-white"
-              : "bg-[#0015ff] hover:bg-[#0015ff]/90 text-white"
-          }`}
-        >
-          <Heart className={`w-4 h-4 mr-2 ${isParticipating ? "fill-current" : ""}`} />
-          {loading ? "İşleniyor..." : isParticipating ? "Katılımı İptal Et" : "Katılacağım"}
-        </Button>
+        <div className="flex w-full gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push(`/duyurular/${announcement.id}`)}
+            className="w-1/2"
+          >
+            Detaylı Bilgi
+          </Button>
+          <Button
+            onClick={handleParticipation}
+            disabled={loading}
+            variant={isParticipating ? "outline" : "default"}
+            className={`w-1/2 transition-all duration-200 ${
+              isParticipating
+                ? "border-[#0015ff] text-[#0015ff] hover:bg-[#0015ff] hover:text-white"
+                : "bg-[#0015ff] hover:bg-[#0015ff]/90 text-white"
+            }`}
+          >
+            <Heart className={`w-4 h-4 mr-2 ${isParticipating ? "fill-current" : ""}`} />
+            {loading ? "İşleniyor..." : isParticipating ? "Katılımı İptal Et" : "Katılacağım"}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )
