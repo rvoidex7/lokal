@@ -78,7 +78,7 @@ export function FeatureSection() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl font-medium md:text-4xl lg:text-5xl mb-6">Neden Lokal?</h2>
-          <p className="max-w-lg text-muted-foreground mx-auto">
+          <p className="max-w-xl text-muted-foreground mx-auto">
             Yerel topluluklar oluşturmak ve anlamlı bağlantılar kurmak için tasarlandık.
             <br className="hidden md:block" />
             Birlikte daha güzel deneyimler yaşayın.
