@@ -81,7 +81,7 @@ export function FeatureSection() {
             Neden <span className="text-[#0015ff]">Lokal</span>?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Yerel topluluklar oluşturmak ve anlamlı bağlantılar kurmak için tasarlandık. Birlikte daha güzel deneyimler
+            Yerel topluluklar oluşturmak ve anlamlı bağlantılar kurmak için tasarlandık.<br className="hidden md:block"/>Birlikte daha güzel deneyimler
             yaşayın.
           </p>
         </motion.div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { LandingHero } from "@/components/landing-hero"
 import { FeatureSection } from "@/components/feature-section"
 import Lokal from "@/components/lokal"
+import { Gallery4 } from "@/components/blocks/gallery"
 
 export default function HomePage() {
   const [showSplash, setShowSplash] = useState(false)
@@ -33,6 +34,54 @@ export default function HomePage() {
     <div className="min-h-screen">
       <LandingHero />
       <FeatureSection />
+      <Gallery4
+        title="Ne sunuyoruz?"
+        description="Aktivitelerimiz ve deneyimlerimizden bir seçki. Atölyelere ve kulüplerimize katılarak yeni hobiler edinin."
+        items={[
+          {
+            id: "punch-atolyesi",
+            title: "Punch Atölyesi",
+            description: "Punch tekniğini öğrenerek kendi tasarımını oluştur.",
+            href: "/aktiviteler",
+            image: "/swipe1.jpeg",
+          },
+          {
+            id: "mum-atolyesi",
+            title: "Mum Atölyesi",
+            description: "Doğal malzemelerle kendi kokulu mumunu yap.",
+            href: "/aktiviteler",
+            image: "/swipe2.jpeg",
+          },
+          {
+            id: "dokulu-tablo-atolyesi",
+            title: "Dokulu Tablo Atölyesi",
+            description: "Farklı materyallerle dokulu sanat çalışmaları.",
+            href: "/aktiviteler",
+            image: "/swipe3.jpeg",
+          },
+          {
+            id: "seramik-atolyesi",
+            title: "Seramik Atölyesi",
+            description: "Çamurla şekillendir, fırınla ve kendi eserini üret.",
+            href: "/aktiviteler",
+            image: "/swipe4.jpeg",
+          },
+          {
+            id: "kitap-kulubu",
+            title: "Kitap Kulübü",
+            description: "Aylık seçkiler, tartışmalar ve yeni keşifler.",
+            href: "/aktiviteler",
+            image: "/swipe5.jpeg",
+          },
+          {
+            id: "sinema-kulubu",
+            title: "Sinema Kulübü",
+            description: "Gösterimler sonrası keyifli sohbetler ve analizler.",
+            href: "/aktiviteler",
+            image: "/placeholder.jpg",
+          },
+        ]}
+      />
     </div>
   )
 }

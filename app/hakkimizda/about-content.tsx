@@ -263,27 +263,6 @@ export default function AboutPageContent() {
               ease: "easeInOut",
             }}
           />
-          
-          {/* Content */}
-          <div className="relative z-10 text-center text-white p-12 md:p-16">
-            <motion.div
-              className="flex justify-center mb-6"
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 0.5, type: "spring" }}
-              viewport={{ once: true }}
-            >
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <Target className="w-8 h-8" />
-              </div>
-            </motion.div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Misyonumuz</h2>
-            <p className="text-xl leading-relaxed max-w-4xl mx-auto text-white/90">
-              Her şehirde, her mahallede güçlü topluluklar oluşturmak ve insanların gerçek hayatta anlamlı bağlantılar
-              kurmasına olanak sağlamak. Teknolojinin gücünü, insani değerleri güçlendirmek için kullanarak, daha
-              bağlantılı ve mutlu bir toplum inşa etmek.
-            </p>
-          </div>
         </motion.div>
       </div>
     </div>
