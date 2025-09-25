@@ -1,6 +1,18 @@
 import { LoginForm } from "@/components/auth/login-form"
+import { redirect } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
 
-export default function AuthPage() {
+export default async function AuthPage() {
+  // Server-side guard: if already authenticated, redirect away from /auth
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) {
+    redirect("/dashboard")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-16">
       <div className="container mx-auto px-4">

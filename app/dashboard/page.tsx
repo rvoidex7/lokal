@@ -14,7 +14,6 @@ import { ActivityTimeline } from "@/components/dashboard/activity-timeline"
 import { LetterHistory } from "@/components/dashboard/personal-letters/letter-history"
 import { ActivityManager } from "@/components/dashboard/activity-manager"
 import { GroupManager } from "@/components/dashboard/group-manager"
-import { DebugDatabase } from "@/components/dashboard/debug-database"
 import { ActivityNotifications, NotificationBell } from "@/components/dashboard/activity-notifications"
 import { useToast } from "@/hooks/use-toast"
 import { 
@@ -219,12 +218,6 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Kahve Kuponlarım</h2>
         <CoffeeVoucherDisplay />
-      </div>
-
-      {/* Debug Component - TEMPORARY */}
-      <div className="space-y-4 border-2 border-red-500 p-4 rounded-lg">
-        <h2 className="text-xl font-semibold text-red-500">Debug Panel (Temporary)</h2>
-        <DebugDatabase />
       </div>
 
       {/* Notifications Panel */}

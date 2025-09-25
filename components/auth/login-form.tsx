@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,6 +19,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
   const supabase = useMemo(() => createClient(), [])
+  const router = useRouter()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,6 +41,7 @@ export function LoginForm() {
         title: "Başarılı",
         description: "Giriş yapıldı!",
       })
+      router.push("/dashboard")
     }
 
     setLoading(false)
@@ -69,6 +72,9 @@ export function LoginForm() {
         title: "Başarılı",
         description: "Hesap oluşturuldu! E-postanızı kontrol edin.",
       })
+      // Optional: if email confirmation is required, you might not get an active session yet
+      // For UX, navigate to dashboard; server guard will bounce back if not confirmed
+      router.push("/dashboard")
     }
 
     setLoading(false)
